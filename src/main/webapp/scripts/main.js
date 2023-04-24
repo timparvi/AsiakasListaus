@@ -5,6 +5,16 @@ function serialize_form(form){
 	        );	
 } 
 
+function requestURLParam(sParam){
+    let sPageURL = window.location.search.substring(1);
+    let sURLVariables = sPageURL.split("&");
+    for (let i = 0; i < sURLVariables.length; i++){
+        let sParameterName = sURLVariables[i].split("=");
+        if(sParameterName[0] == sParam){
+            return sParameterName[1];
+        }
+    }
+}
 
 function haeAsiakkaat(){
 	let url = "asiakkaat?hakusana=" + document.getElementById("hakusana").value; 
@@ -28,6 +38,7 @@ function printItems(respObjList){
     	htmlStr+="<td>"+item.sukunimi+"</td>";
     	htmlStr+="<td>"+item.puhelin+"</td>";
     	htmlStr+="<td>"+item.sposti+"</td>";
+    	htmlStr+="<td><a href='muutaasiakas.jsp?id="+item.id+"'>Muuta</a>&nbsp;";
     	htmlStr+="<td><span class='poista' onclick=varmistaPoisto("+item.id+",'"+encodeURI(item.etunimi)+"','"+encodeURI(item.sukunimi)+"')>Poista</span></td>";   	
     	htmlStr+="</tr>";    	
 	}	
@@ -37,6 +48,12 @@ function printItems(respObjList){
 function tutkiJaLisaa(){
 	if(tutkiTiedot()){
 		lisaaTiedot();
+	}
+}
+
+function tutkiJaPaivita(){
+	if(tutkiTiedot()){
+		paivitaTiedot();
 	}
 }
 
@@ -123,4 +140,47 @@ function poistaAsiakas(id, etunimi, sukunimi){
 		}
    	})
    	.catch(error => console.error("Fetch failed:", error));
+}
+
+function haeAsiakas() {		
+    let url = "asiakkaat?id=" + requestURLParam("id"); //requestURLParam() on funktio, jolla voidaan hakea urlista arvo avaimen perusteella. Löytyy main.js -tiedostosta 	
+	console.log(url);
+    let requestOptions = {
+        method: "GET",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }       
+    };    
+    fetch(url, requestOptions)
+    .then(response => response.json())//Muutetaan vastausteksti JSON-objektiksi
+   	.then(response => {
+   		//console.log(response);
+   		document.getElementById("id").value=response.id;
+   		document.getElementById("etunimi").value=response.etunimi;
+   		document.getElementById("sukunimi").value=response.sukunimi;
+   		document.getElementById("puhelin").value=response.puhelin;
+   		document.getElementById("sposti").value=response.sposti;
+   	}) 
+   	.catch(errorText => console.error("Fetch failed: " + errorText));
 }	
+
+function paivitaTiedot(){	
+	let formData = serialize_form(lomake); //Haetaan tiedot lomakkeelta ja muutetaan JSON-stringiksi
+	//console.log(formData);	
+	let url = "asiakkaat";    
+    let requestOptions = {
+        method: "PUT", 
+        headers: { "Content-Type": "application/json; charset=UTF-8" },  
+    	body: formData
+    };    
+    fetch(url, requestOptions)
+    .then(response => response.json())//Muutetaan vastausteksti JSON-objektiksi
+   	.then(responseObj => {	
+   		//console.log(responseObj);
+   		if(responseObj.response==0){
+   			document.getElementById("ilmo").innerHTML = "Asiakkaan muutos epäonnistui.";	
+        }else if(responseObj.response==1){ 
+        	document.getElementById("ilmo").innerHTML = "Asiakkaan muutos onnistui.";
+			document.lomake.reset(); //Tyhjennetään auton muuttamisen lomake		        	
+		}
+   	})
+   	.catch(errorText => console.error("Fetch failed: " + errorText));
+}

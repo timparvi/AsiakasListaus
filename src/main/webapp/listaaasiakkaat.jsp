@@ -13,10 +13,13 @@
 	<thead>
 		<tr>
 			<th colspan="5" class="oikealle"><a id="linkki" href="lisaaasiakas.jsp">Lisää uusi henkilö</a></th>
+			<th></th>
+		</tr>
 		<tr>
 			<th>Hakusana:</th>
 			<th colspan="2"><input type="text" id="hakusana"></th>
 			<th><input type="button" value="hae" id="hakunappi" onclick="haeAsiakkaat()"></th>
+			<th></th>
 			<th></th>
 		</tr>		
 		<tr>
@@ -24,7 +27,8 @@
 			<th>Sukunimi</th>
 			<th>Puhelin</th>
 			<th>Sähköposti</th>
-			<th>Poistoon?</th>			
+			<th></th>
+			<th></th>			
 		</tr>
 	</thead>
 	<tbody id="tbody">
