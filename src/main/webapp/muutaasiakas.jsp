@@ -5,10 +5,11 @@
 <head>
 <meta charset="UTF-8">
 <script src="scripts/main.js"></script>
+<script src="scripts/io.js"></script>
 <link rel="stylesheet" type="text/css" href="css/main.css">
 <title>Henkilön lisäys</title>
 </head>
-<body>
+<body onload="asetaFocus('etunimi')" onkeydown="tutkiKey(event, 'paivita')">
 <form name="lomake">
 	<table>
 		<thead>	
