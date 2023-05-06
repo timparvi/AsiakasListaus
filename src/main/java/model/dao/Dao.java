@@ -201,4 +201,46 @@ public class Dao {
 		}				
 		return paluuArvo;
 	}
+
+public boolean removeAllItems(String pwd){
+	boolean paluuArvo=true;
+	if(!pwd.equals("Nimda")) { //"Kovakoodattu" salasana -ei ole hyv� idea!
+		return false;
+	}
+	sql="DELETE FROM Autot";						  
+	try {
+		con = yhdista();
+		stmtPrep=con.prepareStatement(sql); 			
+		stmtPrep.executeUpdate();	        
+	} catch (Exception e) {				
+		e.printStackTrace();
+		paluuArvo=false;
+	} finally {
+		sulje();
+	}				
+	return paluuArvo;
+}
+
+public String findUser(String uid, String pwd) {
+	String nimi = null;
+	sql="SELECT * FROM asiakkaat WHERE sposti=? AND salasana=?";						  
+	try {
+		con = yhdista();
+		if(con!=null){ 
+			stmtPrep = con.prepareStatement(sql); 
+			stmtPrep.setString(1, uid);
+			stmtPrep.setString(2, pwd);
+    		rs = stmtPrep.executeQuery();  
+    		if(rs.isBeforeFirst()){ //jos kysely tuotti dataa, eli asiakas l�ytyi
+    			rs.next();
+    			nimi = rs.getString("etunimi")+ " " +rs.getString("sukunimi");     			      			
+			}        		
+		}			        
+	} catch (Exception e) {				
+		e.printStackTrace();			
+	} finally {
+		sulje();
+	}				
+	return nimi;
+}
 }
